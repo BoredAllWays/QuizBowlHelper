@@ -144,6 +144,9 @@
   <ItemGroup>
     <None Include="Data\qb_facts.json" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\vcpkg\installed\x86-windows\include\nlohmann\json.hpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
