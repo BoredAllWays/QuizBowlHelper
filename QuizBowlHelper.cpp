@@ -130,6 +130,9 @@ int main()
 	else
 	{
 		cout << "Invalid argument passed\n";
+		cout << "you can only view or add terms and facts\n";
 	}
+
+
 	return 0;
 }
