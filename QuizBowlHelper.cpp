@@ -11,10 +11,6 @@ using std::string;
 class quiz_bowl
 {
 public:
-	quiz_bowl()
-	{
-		cout << "Quizbowl facts and stuff\n";
-	}
 
 	static void qb_file_view(std::ifstream& qb_file, string fname)
 	{
