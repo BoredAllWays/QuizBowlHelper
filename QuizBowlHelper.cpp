@@ -190,7 +190,7 @@ bool ask_for_continuation()
 
 int main()
 {
-	std::array<const char*, 3> const commands = { "view or v", "add or d", "delete or del" };
+	std::array<const char*, 3> const commands = { "view or v", "add or a", "delete or del" };
 	bool wants_to_continue = true;
 	while (wants_to_continue)
 	{
@@ -201,7 +201,7 @@ int main()
 		cout << '\n';
 		string answer;
 		cin >> answer;
-		const char* file = "Debug/qb_facts.json";
+		const char* file = "C:\Dev\Cpp\QuizBowlHelper\Data";
 		ifstream quiz_bowl_file(file);
 
 		if (answer == "view" || answer == "v")

@@ -144,7 +144,7 @@
     <ClCompile Include="QuizBowlHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Debug\qb_facts.json" />
+    <None Include="Data\qb_facts.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

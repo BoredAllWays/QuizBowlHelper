@@ -20,6 +20,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Debug\qb_facts.json" />
+    <None Include="Data\qb_facts.json" />
   </ItemGroup>
 </Project>
