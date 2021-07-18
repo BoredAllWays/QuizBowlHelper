@@ -41,6 +41,7 @@ public:
 				cout << "Term was deleted\n";
 				o << std::setw(4) << j << std::endl;
 				was_deleted = true;
+				break;
 			}
 
 		}
@@ -218,6 +219,7 @@ int main()
 		{
 			quiz_bowl::qb_file_delete(quiz_bowl_file, file);
 			wants_to_continue = std::move(ask_for_continuation());
+
 		}
 		else 
 		{
