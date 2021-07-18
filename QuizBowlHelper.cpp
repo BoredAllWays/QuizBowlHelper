@@ -201,7 +201,7 @@ int main()
 		cout << '\n';
 		string answer;
 		cin >> answer;
-		const char* file = "C:\Dev\Cpp\QuizBowlHelper\Data";
+		const char* file = "C:/Dev/Cpp/QuizBowlHelper/Data/qb_facts.json";
 		ifstream quiz_bowl_file(file);
 
 		if (answer == "view" || answer == "v")
