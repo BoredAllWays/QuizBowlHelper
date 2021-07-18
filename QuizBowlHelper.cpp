@@ -1,66 +1,108 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <iomanip>
+#include <array>
 #include <nlohmann/json.hpp>
-#include<vector>
 
 using nlohmann::json;
 using std::cout;
 using std::cin;
 using std::string;
 using std::ofstream;
+using std::ifstream;
 
 class quiz_bowl
 {
 public:
-
-	static void qb_file_view(std::ifstream& qb_file, string fname)
+	
+	static void qb_file_delete(ifstream& qb_file, const char*& fname)
 	{
-		json x;
+		json j;
 		try
 		{
-			x = json::parse(qb_file);
+			j = json::parse(qb_file);
 		}
-		catch (...) 
+		catch (json::parse_error e)
 		{
 			error_text();
 			exit(-1);
 		}
 		qb_file.close();
-		std::ofstream o(fname);
-		json j = x;
+		ofstream o(fname);
 		string term;
+		cout << "What term would you like to delete\n";
+		cin >> term;
+		for (const auto& [key, value] : j.items()) 
+		{
+			if (term == key) 
+			{
+				j.erase(j.find(key));
+				cout << "Term was deleted\n";
+				o << std::setw(4) << j << std::endl;
+				exit(0);
+
+			}
+
+		}
+
+		cout << "The term does not exist\n";
+		o << std::setw(4) << j << std::endl;
+		exit(-1);
+
+	}
+
+	static void qb_file_view(ifstream& qb_file, const char*& fname)
+	{
+		json j;
+		try
+		{
+			j = json::parse(qb_file);
+		}
+		catch (json::parse_error e) 
+		{
+			error_text();
+			exit(-1);
+		}
+		qb_file.close();
+		ofstream o(fname);
 		bool term_exists = false;
 		cout << "what term would you like to view\n";
+		for (const auto& [key, value] : j.items())
+		{
+			cout << key << '\n';
+		}
+		cout << '\n';
+		cin.ignore();
+		string term;
 		cin >> term;
 		system("cls");
-		for (auto& i : j.items())
+		for (const auto& [key, value] : j.items())
 		{
-			if (term == i.key())
+			if (term == key)
 			{
-				string val = i.value();
-				cout << i.key() << " :\n" << val;
+				const string value_to_string = value;
+				cout << key << " :\n" << value_to_string;
 				term_exists = true;
 			}
 		}
 		if (!term_exists)
 			cout << "The term doesn't exist!\n";
-		o << j;
+		o << std::setw(4) << j << std::endl;
 	}
 
-	static void qb_file_add(std::ifstream& qb_file, string fname)
+	static void qb_file_add(ifstream& qb_file, const char*& fname)
 	{
-		json x;
+		json j;
 		try
 		{
-			x = json::parse(qb_file);
+			j = json::parse(qb_file);
 		}
-		catch (...)
+		catch (json::parse_error e)
 		{
 			error_text();
 			exit(-1);
 		}
-		json j = x;
 		qb_file.close();
 		string term, fact, multifacts;
 		cout << "what term\n";
@@ -68,21 +110,21 @@ public:
 		std::getline(cin, term);
 		cout << "what are the facts?\n";
 		int counter = 0;
-		while (std::getline(cin, fact) && !fact.empty())
+		while (std::getline(cin, fact))
 		{
 			if (fact == "stop" && counter != 0)
 				break;
-			else if (fact == "stop" && counter == 0)
-				cout << "Do not stop in the first line\n";
+			else if ((fact == "stop" && counter == 0) || fact.empty())
+				cout << "Do not stop in the first line\n or create an empty space as a fact.";
 			multifacts += fact + '\n';
 			counter++;
 		}
 		char already_in_file_answer;
-		auto already_in_file = [j, term]()
+		auto already_in_file = [&j, &term]()
 		{
-			for (auto& i : j.items())
+			for (const auto& [key, value] : j.items())
 			{
-				if (term == i.key())
+				if (term == key)
 				{
 					return true;
 				}
@@ -90,60 +132,36 @@ public:
 			return false;
 		};
 
+		const auto in_file = already_in_file();
 		bool wants_to_be_changed = false;
-		if (already_in_file())
+		if (in_file)
 		{
 
-			cout << "the term " << term << " is already registered, would you like to change the defenition, press y to change it, else press any other letter\n";
+			cout << "the term " << term << " is already registered, would you like to change the definition, press y to change it, else press any other letter\n";
 			cin >> already_in_file_answer;
 			cin.ignore();
-			switch (already_in_file_answer)
+			if (already_in_file_answer == 'y') 
 			{
-			case 'y':
-				j[term] = multifacts;
+				j[term] = std::move(multifacts);
 				cout << "The term's definition has been changed\n";
 				wants_to_be_changed = true;
-				break;
-			default:
-				cout << "the term has not been changed\n";
-				break;
 			}
+			else
+				cout << "the term has not been changed\n";
 		}
 		else
-			j[term] = multifacts;
+			j[term] = std::move(multifacts);
 
-		std::ofstream w(fname);
-		if (!already_in_file() || wants_to_be_changed)
+		ofstream w(fname);
+		if (!in_file || wants_to_be_changed)
 		{
-			w << j;
+			w << std::setw(4) << j << std::endl;
 			cout << "The term " << term << " has been added\n";
 		}
 		else
-			w << x;
+			w << std::setw(4) << j << std::endl;
 	}
 
-	static void qb_file_terms(std::ifstream& qb_file, string fname)
-	{
-		json x;
-		try
-		{
-			x = json::parse(qb_file);
-		}
-		catch (...)
-		{
-			error_text();
-			exit(-1);
-		}
-		json j = x;
-
-		for (auto& i : j.items()) 
-		{
-			cout << i.key() << '\n';
-		}
-
-		ofstream o(fname);
-		o << j;
-	}
 private:
 	static void error_text() 
 	{
@@ -154,14 +172,16 @@ private:
 
 int main()
 {
-	std::vector<string> commands = {"view or v", "add or d", "get_terms or gt"};
-	cout << "which command would you like to use\n";
-	auto command_loop = [commands]() {for (auto& x : commands) { cout << x << '\n'; }};
-	command_loop();
+	std::array<const char*, 3> const commands = { "view or v", "add or d", "delete or del" };
+	cout << "which command do you want to use\n";
+	for (const auto& command : commands) 
+		cout << command << '\n';
+
+	cout << '\n';
 	string answer;
 	cin >> answer;
-	string file = "data/qb_facts.json";
-	std::ifstream quiz_bowl_file(file);
+	const char* file = "data/qb_facts.json";
+	ifstream quiz_bowl_file(file);
 
 	if (answer == "view" || answer == "v")
 	{
@@ -171,12 +191,10 @@ int main()
 	{
 		quiz_bowl::qb_file_add(quiz_bowl_file, file);
 	}
-	else if (answer == "get_terms" || answer == "gt") 
+	else if (answer == "delete" || answer == "del")
 	{
-		quiz_bowl::qb_file_terms(quiz_bowl_file, file);
+		quiz_bowl::qb_file_delete(quiz_bowl_file, file);
 	}
 	else
-	{
 		cout << "Invalid argument passed\n";
-	}
 }
