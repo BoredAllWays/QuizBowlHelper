@@ -14,13 +14,25 @@ public:
 
 	static void qb_file_view(std::ifstream& qb_file, string fname)
 	{
-		json j = json::parse(qb_file);
+		json x;
+		try
+		{
+			x = json::parse(qb_file);
+		}
+		catch (...) 
+		{
+			error_text();
+			exit(-1);
+		}
+		qb_file.close();
+		std::ofstream o(fname);
+		json j = x;
 		string term;
 		bool term_exists = false;
 		cout << "what term would you like to view\n";
-		cin >> term;
 		for (auto& i : j.items())
 		{
+		cin >> term;
 			if (term == i.key())
 			{
 				string val = i.value();
@@ -30,8 +42,6 @@ public:
 		}
 		if (!term_exists)
 			cout << "The term doesn't exist!\n";
-
-		std::ofstream o(fname);
 		o << j;
 	}
 
@@ -44,7 +54,7 @@ public:
 		}
 		catch (...)
 		{
-			cout << "There was an error parsing the json file\n";
+			error_text();
 			exit(-1);
 		}
 		json j = x;
@@ -108,6 +118,12 @@ public:
 		else
 			w << x;
 	}
+private:
+	static void error_text() 
+	{
+		cout << "There was an error parsing the json file\n";
+		cout << "please put {} in the json file called qb_facts.json, then add something\n";
+	}
 };
 
 
@@ -130,9 +146,5 @@ int main()
 	else
 	{
 		cout << "Invalid argument passed\n";
-		cout << "you can only view or add terms and facts\n";
 	}
-
-
-	return 0;
 }

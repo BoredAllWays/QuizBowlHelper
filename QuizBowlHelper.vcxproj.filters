@@ -22,9 +22,4 @@
   <ItemGroup>
     <None Include="Data\qb_facts.json" />
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\vcpkg\installed\x86-windows\include\nlohmann\json.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
 </Project>
