@@ -2,11 +2,13 @@
 #include <fstream>
 #include <string>
 #include <nlohmann/json.hpp>
+#include<vector>
 
 using nlohmann::json;
 using std::cout;
 using std::cin;
 using std::string;
+using std::ofstream;
 
 class quiz_bowl
 {
@@ -30,13 +32,14 @@ public:
 		string term;
 		bool term_exists = false;
 		cout << "what term would you like to view\n";
+		cin >> term;
+		system("cls");
 		for (auto& i : j.items())
 		{
-		cin >> term;
 			if (term == i.key())
 			{
 				string val = i.value();
-				cout << i.key() << " : " << val;
+				cout << i.key() << " :\n" << val;
 				term_exists = true;
 			}
 		}
@@ -118,6 +121,29 @@ public:
 		else
 			w << x;
 	}
+
+	static void qb_file_terms(std::ifstream& qb_file, string fname)
+	{
+		json x;
+		try
+		{
+			x = json::parse(qb_file);
+		}
+		catch (...)
+		{
+			error_text();
+			exit(-1);
+		}
+		json j = x;
+
+		for (auto& i : j.items()) 
+		{
+			cout << i.key() << '\n';
+		}
+
+		ofstream o(fname);
+		o << j;
+	}
 private:
 	static void error_text() 
 	{
@@ -126,22 +152,28 @@ private:
 	}
 };
 
-
 int main()
 {
-	cout << "say add to add something or view to view something\n";
+	std::vector<string> commands = {"view or v", "add or d", "get_terms or gt"};
+	cout << "which command would you like to use\n";
+	auto command_loop = [commands]() {for (auto& x : commands) { cout << x << '\n'; }};
+	command_loop();
 	string answer;
 	cin >> answer;
 	string file = "data/qb_facts.json";
 	std::ifstream quiz_bowl_file(file);
 
-	if (answer == "view")
+	if (answer == "view" || answer == "v")
 	{
 		quiz_bowl::qb_file_view(quiz_bowl_file, file);
 	}
-	else if (answer == "add")
+	else if (answer == "add" || answer == "a")
 	{
 		quiz_bowl::qb_file_add(quiz_bowl_file, file);
+	}
+	else if (answer == "get_terms" || answer == "gt") 
+	{
+		quiz_bowl::qb_file_terms(quiz_bowl_file, file);
 	}
 	else
 	{
