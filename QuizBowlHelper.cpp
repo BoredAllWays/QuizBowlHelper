@@ -12,8 +12,7 @@ using std::string;
 using std::ofstream;
 using std::ifstream;
 
-class quiz_bowl
-{
+class quiz_bowl{
 public:
 	
 	static void qb_file_delete(ifstream& qb_file, const char*& fname)
@@ -28,6 +27,7 @@ public:
 			error_text();
 			exit(-1);
 		}
+		bool was_deleted = false;
 		qb_file.close();
 		ofstream o(fname);
 		string term;
@@ -40,16 +40,16 @@ public:
 				j.erase(j.find(key));
 				cout << "Term was deleted\n";
 				o << std::setw(4) << j << std::endl;
-				exit(0);
-
+				was_deleted = true;
 			}
 
 		}
+		if (!was_deleted) 
+		{
+			cout << "The term does not exist\n";
+			o << std::setw(4) << j << std::endl;
 
-		cout << "The term does not exist\n";
-		o << std::setw(4) << j << std::endl;
-		exit(-1);
-
+		}
 	}
 
 	static void qb_file_view(ifstream& qb_file, const char*& fname)
@@ -61,6 +61,7 @@ public:
 		}
 		catch (json::parse_error e) 
 		{
+			cout << e.what() << std::endl;
 			error_text();
 			exit(-1);
 		}
@@ -170,31 +171,57 @@ private:
 	}
 };
 
+bool ask_for_continuation() 
+{
+	cout << "\n\n";
+	char answer;
+	cout << "do you want to do something else? if so press y, else press any key\n";
+	cin >> answer;
+	if (answer == 'y') 
+	{
+		system("cls");
+		return true;
+	}
+
+	return false;
+	
+
+}
+
 int main()
 {
 	std::array<const char*, 3> const commands = { "view or v", "add or d", "delete or del" };
-	cout << "which command do you want to use\n";
-	for (const auto& command : commands) 
-		cout << command << '\n';
+	bool wants_to_continue = true;
+	while (wants_to_continue)
+	{
+		cout << "which command do you want to use\n";
+		for (const auto& command : commands)
+			cout << command << '\n';
 
-	cout << '\n';
-	string answer;
-	cin >> answer;
-	const char* file = "data/qb_facts.json";
-	ifstream quiz_bowl_file(file);
+		cout << '\n';
+		string answer;
+		cin >> answer;
+		const char* file = "Debug/qb_facts.json";
+		ifstream quiz_bowl_file(file);
 
-	if (answer == "view" || answer == "v")
-	{
-		quiz_bowl::qb_file_view(quiz_bowl_file, file);
+		if (answer == "view" || answer == "v")
+		{
+			quiz_bowl::qb_file_view(quiz_bowl_file, file);
+			wants_to_continue = std::move(ask_for_continuation());
+		}
+		else if (answer == "add" || answer == "a")
+		{
+			quiz_bowl::qb_file_add(quiz_bowl_file, file);
+			wants_to_continue = std::move(ask_for_continuation());
+		}
+		else if (answer == "delete" || answer == "del")
+		{
+			quiz_bowl::qb_file_delete(quiz_bowl_file, file);
+			wants_to_continue = std::move(ask_for_continuation());
+		}
+		else 
+		{
+			cout << "Invalid argument passed\n";
+		}
 	}
-	else if (answer == "add" || answer == "a")
-	{
-		quiz_bowl::qb_file_add(quiz_bowl_file, file);
-	}
-	else if (answer == "delete" || answer == "del")
-	{
-		quiz_bowl::qb_file_delete(quiz_bowl_file, file);
-	}
-	else
-		cout << "Invalid argument passed\n";
 }
