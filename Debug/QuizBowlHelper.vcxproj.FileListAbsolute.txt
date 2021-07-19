@@ -1,0 +1,2 @@
+C:\Dev\Cpp\QuizBowlHelper\Debug\QuizBowlHelper.exe
+C:\Dev\Cpp\QuizBowlHelper\Debug\QuizBowlHelper.pdb

@@ -12,6 +12,7 @@ using std::cin;
 using std::string;
 using std::ofstream;
 using std::ifstream;
+using std::ios;
 
 class quiz_bowl{
 public:
@@ -111,6 +112,11 @@ public:
 		cout << "what term\n";
 		cin.ignore();
 		std::getline(cin, term);
+
+		for (const auto& i : term) 
+		{
+			
+		}
 		cout << "what are the facts?\n";
 		int counter = 0;
 		while (std::getline(cin, fact))
@@ -190,8 +196,10 @@ bool ask_for_continuation()
 
 }
 
+
 int main()
 {
+
 	std::array<const char*, 3> const commands = { "view or v", "add or a", "delete or del" };
 	bool wants_to_continue = true;
 	while (wants_to_continue)
@@ -220,11 +228,11 @@ int main()
 		{
 			quiz_bowl::qb_file_delete(quiz_bowl_file, file);
 			wants_to_continue = std::move(ask_for_continuation());
-
 		}
 		else 
 		{
 			cout << "Invalid argument passed\n";
+			wants_to_continue = std::move(ask_for_continuation());
 		}
 	}
 }
