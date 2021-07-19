@@ -5,14 +5,13 @@
 #include <array>
 #include <nlohmann/json.hpp>
 
-
 using nlohmann::json;
 using std::cout;
 using std::cin;
 using std::string;
 using std::ofstream;
 using std::ifstream;
-using std::ios;
+
 
 class quiz_bowl{
 public:
